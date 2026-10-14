@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transporte Público Rural - Ruta Huayruropata &bull; Base 8 Terminal Santiago &bull; Izcuchaca &bull; Anta</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2canvas para exportar/descargar imagen PNG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        dark: {
+                            800: '#111827',
+                            850: '#0f172a',
+                            900: '#0b1120',
+                            950: '#030712',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                font-size: 8pt !important;
+                margin: 0 !important;
+                padding: 10px !important;
+            }
+            .print-table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+            .print-table th, .print-table td {
+                border: 1px solid #111 !important;
+                padding: 4px 6px !important;
+                color: #000 !important;
+                font-size: 8.5pt !important;
+                background: transparent !important;
+            }
+            .print-header { display: block !important; }
+        }
+        @keyframes master-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 16px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .btn-empezar-glow {
+            animation: master-pulse 2s infinite;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #070d18; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="bg-dark-950 text-slate-100 min-h-screen font-sans antialiased flex flex-col justify-between selection:bg-emerald-500 selection:text-dark-950">
+
+    <header class="border-b border-slate-800 bg-dark-900/90 sticky top-0 z-40 no-print backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 border border-emerald-400/40">
+                    <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-base font-black text-white tracking-tight flex items-center gap-2">
+                        Transporte Público Rural &bull; Huayruropata &rarr; Izcuchaca &rarr; Anta
+                        <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            Circuito 63 min
+                        </span>
+                    </h1>
+                    <p class="text-[11px] text-slate-400">
+                        Huayruropata (0m) &rarr; <strong class="text-sky-300">Base 8 Terminal Santiago (+8m)</strong> &rarr; Arco Poroy (+12m) &rarr; Cachimayo (+6m) &rarr; Izcuchaca (+19m) &rarr; Anta (+18m)
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- 12H vs 24H Quick Switcher -->
+                <div class="flex items-center bg-dark-950 border border-slate-700 rounded-xl p-1 shadow-inner">
+                    <button id="toggle12H" onclick="setTimeFormat('12H')" class="px-3 py-1 text-xs font-bold rounded-lg transition bg-blue-600 text-white shadow">
+                        12 Horas (AM/PM)
+                    </button>
+                    <button id="toggle24H" onclick="setTimeFormat('24H')" class="px-3 py-1 text-xs font-semibold rounded-lg transition text-slate-400 hover:text-white">
+                        24 Horas
+                    </button>
+                </div>
+
+                <button onclick="toggleConfigModal(true)" class="p-2 sm:px-3 sm:py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition flex items-center gap-1.5" title="Personalizar nombres de paraderos">
+                    <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="hidden sm:inline">Paraderos</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-4 flex-1 w-full">
+
+        <!-- Print-only header -->
+        <div class="hidden print-header border-b-2 border-black pb-2 mb-3 text-black">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h2 class="text-xl font-black uppercase tracking-wider">Planilla de Control y Salida - Transporte Público Rural</h2>
+                    <p class="text-xs text-gray-700">Ruta: Huayruropata (Base) &bull; Base 8 Terminal Santiago (+8m) &bull; Arco Poroy (+12m) &bull; Cachimayo (+6m) &bull; Izcuchaca (+19m) &bull; Terminal Anta (+18m) | Total: 63 min</p>
+                </div>
+                <div class="text-right text-xs">
+                    <p><strong>Formato:</strong> <span id="printModeLabel">12 Horas (AM/PM)</span></p>
+                    <p><strong>Impreso:</strong> <span id="printDateStamp">--</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification Popover -->
+        <div id="toast" class="hidden fixed bottom-6 right-6 z-50 bg-dark-900 border border-slate-700 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300">
+            <div id="toastIcon" class="text-emerald-400"></div>
+            <span id="toastMsg" class="text-xs sm:text-sm font-semibold">Mensaje</span>
+        </div>
+
+        <!-- PANEL DE ACCIÓN Y DESPACHO RÁPIDO CON BASE 8 (DE 8 EN 8 MIN) -->
+        <section class="bg-dark-900 border border-slate-800 rounded-2xl p-4 shadow-xl no-print">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            <span>Despacho y Control de Frecuencia</span>
+                            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">
+                                Base 8: De 8 en 8 min
+                            </span>
+                        </h2>
+                        <p class="text-xs text-slate-400">
+                            Circuito 63m &bull; Huayruropata (0m) &rarr; <span class="text-sky-300 font-semibold">Base 8 Terminal Santiago (+8m)</span> &rarr; Arco Poroy (+12m) &rarr; Cachimayo (+6m) &rarr; Izcuchaca (+19m) &rarr; Anta (+18m)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+                    <div class="flex items-center gap-2 bg-dark-950 border border-slate-700 px-3 py-1.5 rounded-xl">
+                        <label class="text-xs font-semibold text-slate-300">N° Móvil:</label>
+                        <input type="text" id="quickUnitNum" value="01" class="w-16 bg-transparent text-center font-mono font-black text-sm text-emerald-400 focus:outline-none">
+                    </div>
+                    <button id="btnEmpezarSalida" onclick="empezarSalidaAhora()" title="Despachar el móvil indicado con la hora actual exacta del sistema" class="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-95 text-dark-950 font-black text-xs sm:text-sm rounded-xl shadow-lg shadow-emerald-500/30 transition flex items-center justify-center gap-2 cursor-pointer">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                            <path d="M4.5 3a1.5 1.5 0 00-1.5 1.5v11A1.5 1.5 0 004.5 17h1.086a1.5 1.5 0 001.06-.44l6.5-6.5a1.5 1.5 0 000-2.12l-6.5-6.5A1.5 1.5 0 005.586 3H4.5zM14 4a1 1 0 00-1 1v10a1 1 0 102 0V5a1 1 0 00-1-1z" />
+                        </svg>
+                        <span>🚀 INICIAR / SALIDA YA</span>
+                    </button>
+                    <button id="btnAlinearOcho" onclick="alinearFlotaOchoMinutos()" title="Alinear la casilla Base 8 Terminal Santiago para que cuente exactamente de 8 en 8 minutos" class="px-4 py-2.5 bg-sky-600 hover:bg-sky-500 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-sky-600/30 transition flex items-center justify-center gap-2 border border-sky-400/40 cursor-pointer">
+                        <svg class="w-4 h-4 text-sky-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>⏱️ Contar de 8 en 8 min</span>
+                    </button>
+                    <button id="btnReiniciarJornada" onclick="iniciarHorariosDesdeHoraActual()" title="Iniciar la planilla de nuevo: Móvil 01 a la hora actual y los siguientes cada 8 minutos" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-2 border border-blue-400/40 cursor-pointer">
+                        <svg class="w-4 h-4 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        <span>🔄 Iniciar Jornada Ahora</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 no-print">
+            
+            <!-- Manual Entry -->
+            <section class="lg:col-span-7 bg-dark-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+                <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-slate-800">
+                    <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Registro de Unidad
+                    </h3>
+                    <span class="text-[11px] text-sky-400 font-mono font-semibold">Base 8 auto +8 min</span>
+                </div>
+
+                <form id="singleForm" onsubmit="handleSingleSubmit(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                    <div class="sm:col-span-3">
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">N° Móvil</label>
+                        <input type="text" id="unitInput" required placeholder="01" class="w-full bg-dark-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-mono">
+                    </div>
+
+                    <div class="sm:col-span-4">
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Placa</label>
+                        <input type="text" id="plateInput" placeholder="V7X-841" class="w-full bg-dark-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 uppercase font-mono">
+                    </div>
+
+                    <div class="sm:col-span-5">
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Conductor</label>
+                        <input type="text" id="driverInput" placeholder="Nombre de chofer" class="w-full bg-dark-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                    </div>
+
+                    <div class="sm:col-span-7">
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1 flex items-center justify-between">
+                            <span>HORA (Salida)</span>
+                            <span class="text-[10px] text-sky-400 font-normal">Base 8 será: +8m</span>
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <input type="time" id="departureTime" required class="w-full bg-dark-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 font-mono">
+                            <button type="button" onclick="setSystemTimeToInput()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition whitespace-nowrap">
+                                Hora Actual
+                            </button>
+                            <button type="button" onclick="setNextSuggestedTime()" class="px-3 py-2 bg-sky-950/60 hover:bg-sky-900 text-sky-300 text-xs font-semibold rounded-xl border border-sky-800/50 transition whitespace-nowrap" title="Calcular automáticamente +8 min tras el último móvil">
+                                +8 min
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-5 flex items-end">
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold text-xs sm:text-sm py-2 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                            </svg>
+                            Agregar a Planilla
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Batch Frequency Generator -->
+            <section class="lg:col-span-5 bg-dark-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+                <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-slate-800">
+                    <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        Generar Flota en Serie
+                    </h3>
+                    <span class="text-[10px] text-sky-400 font-mono font-bold">Frecuencia 8 min</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2.5">
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-[11px] font-semibold text-slate-400">Hora Inicio</label>
+                            <button type="button" onclick="setBatchStartTimeToNow()" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-bold underline transition" title="Poner hora actual del sistema">
+                                Actual
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <input type="time" id="batchStartTime" class="w-full bg-dark-950 border border-slate-700 rounded-xl px-2.5 py-2 text-sm text-white focus:outline-none focus:border-blue-500 font-mono">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Frecuencia</label>
+                        <div class="relative">
+                            <input type="number" id="batchInterval" value="8" min="1" max="120" class="w-full bg-dark-950 border border-slate-700 rounded-xl pl-2.5 pr-6 py-2 text-sm text-sky-300 font-bold focus:outline-none focus:border-blue-500 font-mono">
+                            <span class="absolute right-2 top-2 text-slate-500 text-xs">m</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Cantidad</label>
+                        <input type="number" id="batchCount" value="6" min="1" max="50" class="w-full bg-dark-950 border border-slate-700 rounded-xl px-2.5 py-2 text-sm text-white focus:outline-none focus:border-blue-500 font-mono">
+                    </div>
+
+                    <div class="col-span-3 pt-1">
+                        <button onclick="generateBatchFleet()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            Generar Serie (de 8 en 8 min)
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Barra de Filtros y Acciones -->
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-dark-900/80 p-3 rounded-2xl border border-slate-800 no-print">
+            <div class="flex flex-wrap items-center gap-2.5">
+                <div class="relative w-full sm:w-60">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </span>
+                    <input type="text" id="searchInput" oninput="renderTable()" placeholder="Buscar móvil, placa, chofer..." class="w-full bg-dark-950 border border-slate-700 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div class="flex items-center gap-1 bg-dark-950 p-1 rounded-xl border border-slate-800 text-xs">
+                    <button onclick="setStatusFilter('ALL')" id="filterAll" class="px-2.5 py-1 rounded-lg font-bold bg-blue-600 text-white transition">Todos (<span id="countTotal">0</span>)</button>
+                    <button onclick="setStatusFilter('WAITING')" id="filterWaiting" class="px-2 py-1 rounded-lg text-slate-400 hover:text-white transition">Espera (<span id="countWaiting">0</span>)</button>
+                    <button onclick="setStatusFilter('EN_ROUTE')" id="filterEnRoute" class="px-2 py-1 rounded-lg text-slate-400 hover:text-white transition">En Ruta (<span id="countEnRoute">0</span>)</button>
+                    <button onclick="setStatusFilter('ARRIVED')" id="filterArrived" class="px-2 py-1 rounded-lg text-slate-400 hover:text-white transition">Llegaron (<span id="countArrived">0</span>)</button>
+                </div>
+            </div>
+
+            <div class="flex items-center flex-wrap gap-2">
+                <button onclick="alinearFlotaOchoMinutos()" title="Alinear para que la casilla Base 8 Terminal Santiago cuente estrictamente de 8 en 8 min" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-md shadow-sky-600/30 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    ⏱️ Contar de 8 en 8 min
+                </button>
+                <button onclick="iniciarHorariosDesdeHoraActual()" title="Iniciar la planilla de nuevo con la hora actual" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-md shadow-emerald-600/20">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Iniciar desde Hora Actual
+                </button>
+                <button onclick="window.print()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Imprimir A4
+                </button>
+                <button onclick="exportToCSV()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Exportar Excel
+                </button>
+                <button onclick="exportToPNG()" title="Exportar y descargar la planilla como imagen PNG para WhatsApp" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-md shadow-blue-600/30 cursor-pointer">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    📸 Exportar PNG
+                </button>
+                <input type="file" id="importFileInput" accept=".csv,.json,.txt" onchange="handleImportFile(event)" class="hidden">
+                <button onclick="triggerImportFile()" title="Importar planilla desde archivo CSV o copia de seguridad" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    Importar
+                </button>
+                <button onclick="loadSampleData()" class="px-3 py-1.5 bg-blue-950/60 hover:bg-blue-900 text-blue-300 text-xs font-semibold rounded-xl border border-blue-800/40 transition">
+                    Ejemplo
+                </button>
+                <button onclick="clearAllData()" class="px-3 py-1.5 bg-red-950/60 hover:bg-red-900 text-red-300 text-xs font-semibold rounded-xl border border-red-800/40 transition">
+                    Vaciar
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabla de Planilla Principal -->
+        <div id="planillaTableContainer" class="bg-dark-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden print:border-none print:shadow-none">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs sm:text-sm print-table">
+                    <thead class="bg-dark-950 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800 print:bg-white print:text-black">
+                        <tr>
+                            <th class="py-3 px-3 text-center w-12 font-bold font-mono">N°</th>
+                            <th class="py-3 px-3 font-semibold">Móvil / Placa</th>
+                            <th class="py-3 px-3 font-semibold hidden md:table-cell">Chofer</th>
+                            
+                            <!-- Columna HORA (Salida) -->
+                            <th class="py-3 px-3 text-center bg-slate-800/40 font-mono text-white">
+                                <div id="thBase" class="font-black text-sm tracking-wider text-white">HORA</div>
+                                <div class="text-[10px] text-slate-400 font-normal">Salida</div>
+                            </th>
+
+                            <!-- Casillas de paraderos en color azul: Base 8, Arco Poroy, Cachimayo, Izcuchaca, Terminal Anta -->
+                            <th class="py-3 px-3 text-center font-mono text-blue-200 bg-blue-950/40 border-x border-blue-800/60 shadow-inner">
+                                <div id="thC1" class="font-black text-blue-100">Base 8 Terminal Santiago</div>
+                                <div class="text-[10px] text-blue-300 font-bold bg-blue-600/30 rounded px-1.5 py-0.5 inline-block mt-0.5 border border-blue-400/40">
+                                    +8 min (De 8 en 8)
+                                </div>
+                            </th>
+
+                            <th class="py-3 px-3 text-center font-mono text-blue-300 bg-blue-950/25 border-r border-blue-900/40">
+                                <div id="thC2" class="font-bold text-blue-200">Arco Poroy</div>
+                                <div class="text-[10px] text-blue-400 font-normal">+12m (20m)</div>
+                            </th>
+                            <th class="py-3 px-3 text-center font-mono text-blue-300 bg-blue-950/25 border-r border-blue-900/40">
+                                <div id="thC3" class="font-bold text-blue-200">Cachimayo</div>
+                                <div class="text-[10px] text-blue-400 font-normal">+6m (26m)</div>
+                            </th>
+                            <th class="py-3 px-3 text-center font-mono text-blue-300 bg-blue-950/25 border-r border-blue-900/40">
+                                <div id="thC4" class="font-bold text-blue-200">Izcuchaca (Anta)</div>
+                                <div class="text-[10px] text-blue-400 font-normal">+19m (45m)</div>
+                            </th>
+                            <th class="py-3 px-3 text-center font-mono text-blue-200 bg-blue-950/40 border-r border-blue-800/60">
+                                <div id="thEnd" class="font-black text-blue-100">Terminal Anta</div>
+                                <div class="text-[10px] text-blue-300 font-bold bg-blue-600/25 rounded px-1.5 py-0.5 inline-block mt-0.5 border border-blue-400/30">+18m (Total 63m)</div>
+                            </th>
+
+                            <th class="py-3 px-3 text-center font-semibold">Estado</th>
+                            <th class="py-3 px-3 font-semibold">Observación</th>
+                            <th class="py-3 px-3 text-center no-print w-24">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fleetTableBody" class="divide-y divide-slate-800/70 text-slate-300">
+                        <!-- Rendered by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="emptyTableAlert" class="hidden py-12 text-center text-slate-500">
+                <p class="text-sm font-semibold text-slate-400">No hay carros registrados en la planilla</p>
+                <p class="text-xs text-slate-500 mt-1">Presiona "🚀 INICIAR / SALIDA YA" o "⏱️ Contar de 8 en 8 min" para comenzar.</p>
+            </div>
+        </div>
+
+        <!-- Tarjeta Informativa de Cadena de Tiempos -->
+        <section class="bg-dark-900 border border-slate-800 rounded-2xl p-4 text-xs no-print">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-bold text-slate-300 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                    </svg>
+                    Cadena de Tiempos (+8m &rarr; +12m &rarr; +6m &rarr; +19m &rarr; +18m)
+                </h3>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-dark-950 text-emerald-400 border border-slate-700 font-bold">
+                    Tiempo de Vuelta Completa: 63 min (1 hora con 3 min)
+                </span>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center font-mono">
+                <div class="bg-dark-950 p-2.5 rounded-xl border border-slate-800">
+                    <span class="text-[10px] text-slate-400 font-semibold">Salida Base</span>
+                    <div class="text-sm font-black text-white">0 min</div>
+                    <div class="text-[11px] text-slate-300 truncate mt-0.5" id="lblBase">HORA</div>
+                </div>
+                <div class="bg-dark-950 p-2.5 rounded-xl border border-blue-600/50 bg-blue-950/30">
+                    <span class="text-[10px] text-blue-300 font-bold">+8 min (de 8 en 8)</span>
+                    <div class="text-sm font-black text-blue-200">8 min</div>
+                    <div class="text-[11px] text-blue-300 font-semibold truncate mt-0.5" id="lblC1">Base 8 Terminal Santiago</div>
+                </div>
+                <div class="bg-dark-950 p-2.5 rounded-xl border border-blue-800/40 bg-blue-950/20">
+                    <span class="text-[10px] text-blue-400 font-bold">+12 min</span>
+                    <div class="text-sm font-black text-blue-300">20 min</div>
+                    <div class="text-[11px] text-blue-200/90 truncate mt-0.5" id="lblC2">Arco Poroy</div>
+                </div>
+                <div class="bg-dark-950 p-2.5 rounded-xl border border-blue-800/40 bg-blue-950/20">
+                    <span class="text-[10px] text-blue-400 font-bold">+6 min</span>
+                    <div class="text-sm font-black text-blue-300">26 min</div>
+                    <div class="text-[11px] text-blue-200/90 truncate mt-0.5" id="lblC3">Cachimayo</div>
+                </div>
+                <div class="bg-dark-950 p-2.5 rounded-xl border border-blue-800/40 bg-blue-950/20">
+                    <span class="text-[10px] text-blue-400 font-bold">+19 min</span>
+                    <div class="text-sm font-black text-blue-300">45 min</div>
+                    <div class="text-[11px] text-blue-200/90 truncate mt-0.5" id="lblC4">Izcuchaca (Anta)</div>
+                </div>
+                <div class="bg-blue-950/30 p-2.5 rounded-xl border border-blue-700/50">
+                    <span class="text-[10px] text-blue-300 font-bold">+18 min</span>
+                    <div class="text-sm font-black text-blue-100">63 min</div>
+                    <div class="text-[11px] text-blue-300 truncate mt-0.5" id="lblEnd">Terminal Anta</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-slate-800/80 py-3 text-center text-xs text-slate-500 no-print">
+        Control de Despacho &bull; Planilla de Salida y Llegada Rural (Circuito 63 min &bull; Base 8 cada 8 min)
+    </footer>
+
+    <!-- Modal de Configuración de Paraderos -->
+    <div id="configModal" class="hidden fixed inset-0 z-50 bg-dark-950/80 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+        <div class="bg-dark-900 border border-slate-700 rounded-2xl w-full max-w-lg p-5 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                    <svg class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Nombres Personalizados de Paraderos
+                </h3>
+                <button onclick="toggleConfigModal(false)" class="text-slate-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-400">Personaliza los nombres de cada punto de control para la planilla y exportaciones:</p>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre Columna HORA (Salida)</label>
+                    <input type="text" id="cfgBase" class="w-full bg-dark-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-blue-400 mb-1">Base 8 - Terminal Santiago (+8 min)</label>
+                        <input type="text" id="cfgC1" class="w-full bg-dark-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-blue-400 mb-1">Arco Poroy (+12 min)</label>
+                        <input type="text" id="cfgC2" class="w-full bg-dark-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-blue-400 mb-1">Cachimayo (+6 min)</label>
+                        <input type="text" id="cfgC3" class="w-full bg-dark-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-blue-400 mb-1">Izcuchaca (+19 min)</label>
+                        <input type="text" id="cfgC4" class="w-full bg-dark-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-blue-400 mb-1">Terminal Anta (+18 min - Total 63 min)</label>
+                    <input type="text" id="cfgEnd" class="w-full bg-dark-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+                <button onclick="restoreDefaultCheckpoints()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition">
+                    Restablecer
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="toggleConfigModal(false)" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-semibold rounded-xl transition">
+                        Cancelar
+                    </button>
+                    <button onclick="saveCheckpointSettings()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition">
+                        Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const ROUTE_STEPS = [8, 12, 6, 19, 18];
+        const TOTAL_MINUTES = 63;
+
+        const DEFAULT_CHECKPOINTS = {
+            base: "HORA",
+            c1: "Base 8 Terminal Santiago",
+            c2: "Arco Poroy",
+            c3: "Cachimayo",
+            c4: "Izcuchaca (Anta)",
+            end: "Terminal Anta"
+        };
+
+        let timeFormat = localStorage.getItem('planilla_time_format') || '12H';
+        let currentFilter = 'ALL';
+        let checkpoints = JSON.parse(localStorage.getItem('planilla_checkpoints')) || { ...DEFAULT_CHECKPOINTS };
+        
+        // Asegurar que base sea HORA y c1 sea siempre Base 8 Terminal Santiago
+        if (!checkpoints.base || checkpoints.base === "Salida Base" || checkpoints.base === "Huayruropata (Cusco)") {
+            checkpoints.base = "HORA";
+        }
+        if (!checkpoints.c1 || checkpoints.c1 === "Control 1" || checkpoints.c1 === "Terminal Santiago") {
+            checkpoints.c1 = "Base 8 Terminal Santiago";
+        }
+        localStorage.setItem('planilla_checkpoints', JSON.stringify(checkpoints));
+
+        let fleet = JSON.parse(localStorage.getItem('planilla_fleet_data')) || [];
+
+        function updateLiveClock() {
+            const now = new Date();
+            const dateOptions = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            const dateStr = now.toLocaleDateString('es-PE', dateOptions);
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            const secStr = `:${String(seconds).padStart(2, '0')}`;
+            let digitsStr = "";
+            let periodStr = "";
+
+            if (timeFormat === '12H') {
+                const isPM = hours >= 12;
+                let h12 = hours % 12;
+                if (h12 === 0) h12 = 12;
+                digitsStr = `${String(h12).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                periodStr = isPM ? "PM" : "AM";
+            } else {
+                digitsStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                periodStr = "HRS";
+            }
+
+            const printStamp = document.getElementById('printDateStamp');
+            if (printStamp) {
+                printStamp.textContent = `${dateStr} - ${digitsStr}${secStr} ${periodStr}`;
+            }
+        }
+
+        function setTimeFormat(format) {
+            timeFormat = format;
+            localStorage.setItem('planilla_time_format', timeFormat);
+            updateFormatToggleUI();
+            renderTable();
+            updateLiveClock();
+            showToast(`Formato cambiado a ${format === '12H' ? '12 Horas (AM/PM)' : '24 Horas'}`);
+        }
+
+        function updateFormatToggleUI() {
+            const btn12 = document.getElementById('toggle12H');
+            const btn24 = document.getElementById('toggle24H');
+            const printLbl = document.getElementById('printModeLabel');
+
+            if (timeFormat === '12H') {
+                if (btn12) btn12.className = "px-3 py-1 text-xs font-bold rounded-lg transition bg-blue-600 text-white shadow";
+                if (btn24) btn24.className = "px-3 py-1 text-xs font-semibold rounded-lg transition text-slate-400 hover:text-white";
+                if (printLbl) printLbl.textContent = "12 Horas (AM/PM)";
+            } else {
+                if (btn24) btn24.className = "px-3 py-1 text-xs font-bold rounded-lg transition bg-blue-600 text-white shadow";
+                if (btn12) btn12.className = "px-3 py-1 text-xs font-semibold rounded-lg transition text-slate-400 hover:text-white";
+                if (printLbl) printLbl.textContent = "24 Horas (HH:MM)";
+            }
+        }
+
+        function formatMinutes(totalMinutes, forcedFormat = null) {
+            const mode = forcedFormat || timeFormat;
+            const normalized = ((totalMinutes % 1440) + 1440) % 1440;
+            let hours = Math.floor(normalized / 60);
+            const mins = normalized % 60;
+
+            if (mode === '24H') {
+                return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+            } else {
+                const period = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                if (hours === 0) hours = 12;
+                return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')} ${period}`;
+            }
+        }
+
+        function parseTimeToMinutes(timeStr) {
+            if (!timeStr) return 0;
+            const parts = timeStr.split(':');
+            const h = parseInt(parts[0], 10) || 0;
+            const m = parseInt(parts[1], 10) || 0;
+            return ((h * 60) + m) % 1440;
+        }
+
+        function minutesTo24H(totalMinutes) {
+            const normalized = ((totalMinutes % 1440) + 1440) % 1440;
+            const hours = Math.floor(normalized / 60);
+            const mins = normalized % 60;
+            return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+        }
+
+        function calculateVehicleTimeline(baseMinutes) {
+            const t0 = baseMinutes;
+            const t1 = t0 + ROUTE_STEPS[0];      // +8m (Base 8 Terminal Santiago)
+            const t2 = t1 + ROUTE_STEPS[1];      // +12m (Arco Poroy, 20m)
+            const t3 = t2 + ROUTE_STEPS[2];      // +6m  (Cachimayo, 26m)
+            const t4 = t3 + ROUTE_STEPS[3];      // +19m (Izcuchaca, 45m)
+            const tEnd = t4 + ROUTE_STEPS[4];    // +18m (Terminal Anta, 63m)
+
+            return {
+                baseMin: t0,
+                c1Min: t1,
+                c2Min: t2,
+                c3Min: t3,
+                c4Min: t4,
+                endMin: tEnd,
+                totalMinutes: TOTAL_MINUTES
+            };
+        }
+
+        function getLiveVehicleStatus(timeline) {
+            const now = new Date();
+            const curMin = (now.getHours() * 60) + now.getMinutes();
+
+            const start = timeline.baseMin;
+            const end = timeline.endMin;
+
+            if (curMin < start) {
+                const diff = start - curMin;
+                return {
+                    code: 'WAITING',
+                    badge: `<span class="px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-300 border border-blue-500/30 text-[11px] font-bold">En Espera</span>`,
+                    detail: `Sale en ${diff}m`,
+                    activeStep: 0
+                };
+            } else if (curMin >= start && curMin <= end) {
+                let targetCheckpoint = checkpoints.c1;
+                let stepNum = 1;
+
+                if (curMin < timeline.c1Min) {
+                    targetCheckpoint = checkpoints.c1;
+                    stepNum = 1;
+                } else if (curMin < timeline.c2Min) {
+                    targetCheckpoint = checkpoints.c2;
+                    stepNum = 2;
+                } else if (curMin < timeline.c3Min) {
+                    targetCheckpoint = checkpoints.c3;
+                    stepNum = 3;
+                } else if (curMin < timeline.c4Min) {
+                    targetCheckpoint = checkpoints.c4;
+                    stepNum = 4;
+                } else {
+                    targetCheckpoint = checkpoints.end;
+                    stepNum = 5;
+                }
+
+                return {
+                    code: 'EN_ROUTE',
+                    badge: `<span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-bold animate-pulse">En Tramo ${stepNum}</span>`,
+                    detail: `<span class="text-amber-400 font-semibold">&rarr; ${targetCheckpoint}</span>`,
+                    activeStep: stepNum
+                };
+            } else {
+                return {
+                    code: 'ARRIVED',
+                    badge: `<span class="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">Llegada</span>`,
+                    detail: `Completó 63 min`,
+                    activeStep: 6
+                };
+            }
+        }
+
+        function setSystemTimeToInput() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const el = document.getElementById('departureTime');
+            if (el) el.value = `${h}:${m}`;
+        }
+
+        function setBatchStartTimeToNow() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const el = document.getElementById('batchStartTime');
+            if (el) el.value = `${h}:${m}`;
+        }
+
+        // Sugerir automáticamente la hora del siguiente móvil sumando 8 minutos
+        function setNextSuggestedTime() {
+            const el = document.getElementById('departureTime');
+            if (!el) return;
+
+            if (fleet.length === 0) {
+                setSystemTimeToInput();
+                return;
+            }
+
+            const lastItem = fleet[fleet.length - 1];
+            const lastBaseMin = parseTimeToMinutes(lastItem.baseTime);
+            const nextBaseMin = lastBaseMin + 8;
+            el.value = minutesTo24H(nextBaseMin);
+        }
+
+        // ALINEAR LA CASILLA BASE 8 PARA QUE CUENTE ESTRICTAMENTE DE 8 EN 8 MINUTOS
+        function alinearFlotaOchoMinutos() {
+            if (fleet.length === 0) {
+                loadSampleData();
+                return;
+            }
+
+            // Ordenar por hora de salida base actual
+            fleet.sort((a, b) => parseTimeToMinutes(a.baseTime) - parseTimeToMinutes(b.baseTime));
+
+            // Tomar la hora base del primer móvil como referencia inicial
+            const startBaseMin = parseTimeToMinutes(fleet[0].baseTime);
+
+            // Ajustar secuencialmente cada móvil con incremento exacto de 8 minutos
+            fleet.forEach((item, index) => {
+                const newBaseMin = startBaseMin + (index * 8);
+                item.baseTime = minutesTo24H(newBaseMin);
+            });
+
+            const nextNum = fleet.length + 1;
+            const quickNumEl = document.getElementById('quickUnitNum');
+            const unitInputEl = document.getElementById('unitInput');
+            if (quickNumEl) quickNumEl.value = String(nextNum).padStart(2, '0');
+            if (unitInputEl) unitInputEl.value = String(nextNum).padStart(2, '0');
+
+            setNextSuggestedTime();
+            saveAndSortFleet();
+            showToast("⏱️ ¡Casilla Base 8 alineada exitosamente para contar de 8 en 8 minutos!");
+        }
+
+        function iniciarHorariosDesdeHoraActual() {
+            const now = new Date();
+            const currentMin = (now.getHours() * 60) + now.getMinutes();
+            const formattedCurrent = formatMinutes(currentMin);
+            const intervalVal = 8; // Estrictamente de 8 en 8 minutos
+
+            if (fleet.length === 0) {
+                const count = parseInt(document.getElementById('batchCount')?.value, 10) || 6;
+                for (let i = 0; i < count; i++) {
+                    const stepMinutes = currentMin + (i * intervalVal);
+                    const unitNum = String(i + 1).padStart(2, '0');
+                    fleet.push({
+                        unit: unitNum,
+                        plate: `V${(i % 5) + 1}B-${200 + i}`,
+                        driver: `Conductor ${unitNum}`,
+                        baseTime: minutesTo24H(stepMinutes),
+                        incident: i === 0 ? 'Salida puntual' : ''
+                    });
+                }
+                const nextNum = fleet.length + 1;
+                document.getElementById('quickUnitNum').value = String(nextNum).padStart(2, '0');
+                document.getElementById('unitInput').value = String(nextNum).padStart(2, '0');
+                setNextSuggestedTime();
+                saveAndSortFleet();
+                showToast(`¡Planilla iniciada desde ${formattedCurrent}! Móviles contando de 8 en 8 min`);
+                return;
+            }
+
+            const primerMovil = fleet[0].unit || "01";
+            const confirmar = confirm(
+                `¿Deseas iniciar la planilla de nuevo a partir de la hora actual (${formattedCurrent})?\n\n` +
+                `- El Móvil N° ${primerMovil} saldrá a las ${formattedCurrent}.\n` +
+                `- Los siguientes ${fleet.length - 1} móviles contarán exactamente cada 8 minutos en Base 8.`
+            );
+
+            if (!confirmar) return;
+
+            fleet.forEach((item, index) => {
+                const newBaseMin = currentMin + (index * intervalVal);
+                item.baseTime = minutesTo24H(newBaseMin);
+                if (index === 0) {
+                    item.incident = 'Iniciado a la hora actual';
+                }
+            });
+
+            setNextSuggestedTime();
+            saveAndSortFleet();
+            showToast(`¡Planilla iniciada de nuevo: Base 8 contando de 8 en 8 min!`);
+        }
+
+        function empezarSalidaAhora() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const currentTimeStr = `${h}:${m}`;
+
+            const inputUnitEl = document.getElementById('quickUnitNum');
+            let unitVal = inputUnitEl.value.trim();
+
+            if (!unitVal) {
+                unitVal = String(fleet.length + 1).padStart(2, '0');
+            }
+
+            const existingIndex = fleet.findIndex(item => item.unit === unitVal);
+
+            if (existingIndex !== -1) {
+                fleet[existingIndex].baseTime = currentTimeStr;
+                fleet[existingIndex].incident = 'Salida en vivo ahora';
+                saveAndSortFleet();
+                const formattedTime = formatMinutes(parseTimeToMinutes(currentTimeStr));
+                showToast(`¡Móvil ${unitVal} actualizado con la hora actual: ${formattedTime}!`);
+
+                const numericPart = parseInt(unitVal, 10);
+                if (!isNaN(numericPart)) {
+                    inputUnitEl.value = String(numericPart + 1).padStart(2, '0');
+                    document.getElementById('unitInput').value = String(numericPart + 1).padStart(2, '0');
+                }
+                setNextSuggestedTime();
+                return;
+            }
+
+            const plateGenerated = `V${Math.floor(1 + Math.random() * 8)}X-${Math.floor(100 + Math.random() * 899)}`;
+
+            fleet.push({
+                unit: unitVal,
+                plate: plateGenerated,
+                driver: `Conductor ${unitVal}`,
+                baseTime: currentTimeStr,
+                incident: 'Salida en vivo'
+            });
+
+            const numericPart = parseInt(unitVal, 10);
+            if (!isNaN(numericPart)) {
+                inputUnitEl.value = String(numericPart + 1).padStart(2, '0');
+                document.getElementById('unitInput').value = String(numericPart + 1).padStart(2, '0');
+            }
+
+            setNextSuggestedTime();
+            saveAndSortFleet();
+            const formattedTime = formatMinutes(parseTimeToMinutes(currentTimeStr));
+            showToast(`¡Móvil ${unitVal} despachado a la hora exacta: ${formattedTime}!`);
+        }
+
+        function handleSingleSubmit(event) {
+            event.preventDefault();
+            const unit = document.getElementById('unitInput').value.trim();
+            const plate = document.getElementById('plateInput').value.trim().toUpperCase();
+            const driver = document.getElementById('driverInput').value.trim();
+            const baseTime = document.getElementById('departureTime').value;
+
+            if (!unit || !baseTime) {
+                showToast("Ingresa el número de unidad y la hora", true);
+                return;
+            }
+
+            fleet.push({
+                unit,
+                plate,
+                driver: driver || `Conductor ${unit}`,
+                baseTime,
+                incident: ''
+            });
+
+            const num = parseInt(unit, 10);
+            if (!isNaN(num)) {
+                document.getElementById('quickUnitNum').value = String(num + 1).padStart(2, '0');
+                document.getElementById('unitInput').value = String(num + 1).padStart(2, '0');
+            } else {
+                document.getElementById('unitInput').value = '';
+            }
+
+            document.getElementById('plateInput').value = '';
+            document.getElementById('driverInput').value = '';
+
+            setNextSuggestedTime();
+            saveAndSortFleet();
+            showToast(`Móvil N° ${unit} registrado con éxito (+8 min Base 8)`);
+        }
+
+        function generateBatchFleet() {
+            const startVal = document.getElementById('batchStartTime').value;
+            const intervalMin = parseInt(document.getElementById('batchInterval').value, 10) || 8;
+            const count = parseInt(document.getElementById('batchCount').value, 10) || 6;
+
+            if (!startVal) {
+                showToast("Ingresa la hora de inicio", true);
+                return;
+            }
+
+            const startMinutes = parseTimeToMinutes(startVal);
+
+            if (fleet.length > 0) {
+                const replace = confirm(
+                    `¿Deseas iniciar la planilla de nuevo con estas ${count} unidades desde ${formatMinutes(startMinutes)} cada ${intervalMin} min?\n\n` +
+                    `- Aceptar: Reemplazar planilla completa.\n` +
+                    `- Cancelar: Agregar al final de la planilla actual.`
+                );
+                if (replace) {
+                    fleet = [];
+                }
+            }
+
+            const baseIndex = fleet.length;
+            for (let i = 0; i < count; i++) {
+                const stepMinutes = startMinutes + (i * intervalMin);
+                const unitNum = String(baseIndex + i + 1).padStart(2, '0');
+                fleet.push({
+                    unit: unitNum,
+                    plate: `V${(i % 5) + 1}B-${200 + i}`,
+                    driver: `Conductor ${unitNum}`,
+                    baseTime: minutesTo24H(stepMinutes),
+                    incident: i === 0 ? 'Salida de inicio' : ''
+                });
+            }
+
+            const nextNum = fleet.length + 1;
+            document.getElementById('quickUnitNum').value = String(nextNum).padStart(2, '0');
+            document.getElementById('unitInput').value = String(nextNum).padStart(2, '0');
+
+            setNextSuggestedTime();
+            saveAndSortFleet();
+            showToast(`Planilla: ${count} unidades generadas cada ${intervalMin}m (Base 8 de 8 en 8)`);
+        }
+
+        function setStatusFilter(filter) {
+            currentFilter = filter;
+            const map = {
+                'ALL': 'filterAll',
+                'WAITING': 'filterWaiting',
+                'EN_ROUTE': 'filterEnRoute',
+                'ARRIVED': 'filterArrived'
+            };
+
+            Object.keys(map).forEach(key => {
+                const btn = document.getElementById(map[key]);
+                if (btn) {
+                    if (key === filter) {
+                        btn.className = "px-2.5 py-1 rounded-lg font-bold bg-blue-600 text-white transition";
+                    } else {
+                        btn.className = "px-2 py-1 rounded-lg text-slate-400 hover:text-white transition";
+                    }
+                }
+            });
+
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('fleetTableBody');
+            const alertEmpty = document.getElementById('emptyTableAlert');
+            const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+
+            tbody.innerHTML = '';
+
+            let cTotal = fleet.length;
+            let cWait = 0;
+            let cRoute = 0;
+            let cArrive = 0;
+
+            const filteredList = fleet.filter((item) => {
+                const baseMin = parseTimeToMinutes(item.baseTime);
+                const timeline = calculateVehicleTimeline(baseMin);
+                const status = getLiveVehicleStatus(timeline);
+
+                if (status.code === 'WAITING') cWait++;
+                else if (status.code === 'EN_ROUTE') cRoute++;
+                else if (status.code === 'ARRIVED') cArrive++;
+
+                const matchText = (item.unit || '').toLowerCase().includes(searchVal) ||
+                                  (item.plate || '').toLowerCase().includes(searchVal) ||
+                                  (item.driver || '').toLowerCase().includes(searchVal);
+
+                const matchStatus = (currentFilter === 'ALL') || (status.code === currentFilter);
+
+                return matchText && matchStatus;
+            });
+
+            document.getElementById('countTotal').textContent = cTotal;
+            document.getElementById('countWaiting').textContent = cWait;
+            document.getElementById('countEnRoute').textContent = cRoute;
+            document.getElementById('countArrived').textContent = cArrive;
+
+            if (filteredList.length === 0) {
+                alertEmpty.classList.remove('hidden');
+            } else {
+                alertEmpty.classList.add('hidden');
+            }
+
+            filteredList.forEach((item, index) => {
+                const baseMin = parseTimeToMinutes(item.baseTime);
+                const timeline = calculateVehicleTimeline(baseMin);
+                const liveStatus = getLiveVehicleStatus(timeline);
+                const fleetIndex = fleet.indexOf(item);
+
+                const tr = document.createElement('tr');
+                tr.className = `hover:bg-slate-800/40 transition-colors border-b border-slate-800/60 print:border-black ${liveStatus.code === 'EN_ROUTE' ? 'bg-blue-950/20' : ''}`;
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 text-center font-mono font-bold text-slate-400 text-xs">${index + 1}</td>
+                    
+                    <td class="py-2.5 px-3">
+                        <div class="font-bold text-white flex items-center gap-1.5 font-mono">
+                            <span class="px-2 py-0.5 rounded bg-blue-600/20 text-blue-300 border border-blue-500/30 text-xs font-bold">
+                                N° ${item.unit}
+                            </span>
+                            ${item.plate ? `<span class="text-xs text-slate-400 print:text-black font-semibold">(${item.plate})</span>` : ''}
+                        </div>
+                    </td>
+
+                    <td class="py-2.5 px-3 hidden md:table-cell text-slate-300 text-xs print:text-black">
+                        <div class="font-medium flex items-center justify-between gap-1">
+                            <span>${item.driver || '<span class="text-slate-600 italic">Chofer por asignar</span>'}</span>
+                            <button onclick="editDriver(${fleetIndex})" class="text-[10px] text-slate-500 hover:text-emerald-400 transition p-0.5 no-print" title="Editar chofer">✏️</button>
+                        </div>
+                    </td>
+
+                    <td class="py-2.5 px-3 text-center font-mono font-bold text-white bg-slate-900/60 print:bg-white print:text-black">
+                        ${formatMinutes(timeline.baseMin)}
+                    </td>
+
+                    <!-- CASILLAS EN COLOR AZUL: Base 8, Arco Poroy, Cachimayo, Izcuchaca, Terminal Anta -->
+                    <td class="py-2.5 px-3 text-center font-mono font-bold text-blue-200 bg-blue-950/30 border-x border-blue-800/50 print:bg-white print:text-black">
+                        <div class="text-sm font-black text-blue-100 tracking-wide">${formatMinutes(timeline.c1Min)}</div>
+                        <div class="text-[9px] text-blue-300/80 font-normal no-print">+8m Santiago</div>
+                    </td>
+
+                    <td class="py-2.5 px-3 text-center font-mono font-semibold text-blue-300 bg-blue-950/15 border-r border-blue-900/30 print:bg-white print:text-black">
+                        ${formatMinutes(timeline.c2Min)}
+                    </td>
+
+                    <td class="py-2.5 px-3 text-center font-mono font-semibold text-blue-300 bg-blue-950/15 border-r border-blue-900/30 print:bg-white print:text-black">
+                        ${formatMinutes(timeline.c3Min)}
+                    </td>
+
+                    <td class="py-2.5 px-3 text-center font-mono font-semibold text-blue-300 bg-blue-950/15 border-r border-blue-900/30 print:bg-white print:text-black">
+                        ${formatMinutes(timeline.c4Min)}
+                    </td>
+
+                    <td class="py-2.5 px-3 text-center font-mono font-extrabold text-blue-200 bg-blue-950/30 border-r border-blue-800/40 print:bg-white print:text-black">
+                        <div class="text-sm font-black text-blue-100">${formatMinutes(timeline.endMin)}</div>
+                        <div class="text-[9px] text-blue-300/80 font-normal no-print">Llegada 63m</div>
+                    </td>
+
+                    <td class="py-2.5 px-3 text-center">
+                        <div class="inline-flex flex-col items-center">
+                            ${liveStatus.badge}
+                            <span class="text-[10px] text-slate-400 mt-0.5 print:hidden">${liveStatus.detail}</span>
+                        </div>
+                    </td>
+
+                    <td class="py-2.5 px-3 text-xs">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-slate-300 print:text-black">${item.incident || '<span class="text-slate-600">-</span>'}</span>
+                            <button onclick="editIncident(${fleetIndex})" class="text-slate-500 hover:text-amber-400 no-print" title="Editar observación">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+
+                    <td class="py-2.5 px-3 text-center no-print">
+                        <div class="flex items-center justify-center space-x-1.5">
+                            <button onclick="editDepartureTime(${fleetIndex})" class="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition" title="Modificar hora de salida">
+                                <svg class="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </button>
+                            <button onclick="deleteUnit(${fleetIndex})" class="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-950/40 transition" title="Eliminar registro">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function editDepartureTime(index) {
+            const item = fleet[index];
+            const currentFormatted = formatMinutes(parseTimeToMinutes(item.baseTime));
+            const promptVal = prompt(
+                `Editar hora de salida para Móvil ${item.unit} (formato 24h ej. 07:15):\nHora actual registrada: ${currentFormatted}`,
+                item.baseTime
+            );
+
+            if (promptVal !== null && promptVal.trim() !== '') {
+                item.baseTime = promptVal.trim();
+                saveAndSortFleet();
+                showToast(`Hora actualizada para Móvil ${item.unit}`);
+            }
+        }
+
+        function editIncident(index) {
+            const item = fleet[index];
+            const promptVal = prompt(`Observación para Móvil ${item.unit}:`, item.incident || '');
+            if (promptVal !== null) {
+                item.incident = promptVal.trim();
+                saveAndSortFleet();
+                showToast("Observación guardada");
+            }
+        }
+
+        function editDriver(index) {
+            const item = fleet[index];
+            if (!item) return;
+
+            const newDriver = prompt(`Nombre del conductor para Móvil N° ${item.unit}:`, item.driver || '');
+            if (newDriver !== null) {
+                item.driver = newDriver.trim();
+                saveAndSortFleet();
+                showToast(`Conductor actualizado para Móvil N° ${item.unit}`);
+            }
+        }
+
+        function deleteUnit(index) {
+            fleet.splice(index, 1);
+            saveAndSortFleet();
+            setNextSuggestedTime();
+            showToast("Unidad eliminada");
+        }
+
+        function saveAndSortFleet() {
+            fleet.sort((a, b) => parseTimeToMinutes(a.baseTime) - parseTimeToMinutes(b.baseTime));
+            localStorage.setItem('planilla_fleet_data', JSON.stringify(fleet));
+            renderTable();
+        }
+
+        function clearAllData() {
+            fleet = [];
+            saveAndSortFleet();
+            document.getElementById('quickUnitNum').value = "01";
+            document.getElementById('unitInput').value = "01";
+            setSystemTimeToInput();
+            showToast("Planilla vaciada");
+        }
+
+        // CARGAR DATOS DE EJEMPLO CON CASILLA BASE 8 CONTANDO EXACTAMENTE DE 8 EN 8 MINUTOS
+        function loadSampleData() {
+            const now = new Date();
+            const curMin = (now.getHours() * 60) + now.getMinutes();
+
+            // 6 unidades espaciadas exactamente cada 8 minutos:
+            // Móvil 01: curMin - 16  -> Base 8: curMin - 8
+            // Móvil 02: curMin - 8   -> Base 8: curMin
+            // Móvil 03: curMin       -> Base 8: curMin + 8
+            // Móvil 04: curMin + 8   -> Base 8: curMin + 16
+            // Móvil 05: curMin + 16  -> Base 8: curMin + 24
+            // Móvil 06: curMin + 24  -> Base 8: curMin + 32
+            fleet = [
+                { unit: "01", plate: "X1B-740", driver: "Víctor Quispe M.", baseTime: minutesTo24H(curMin - 16), incident: "En ruta a Izcuchaca" },
+                { unit: "02", plate: "X2A-512", driver: "Yoni Huamán C.", baseTime: minutesTo24H(curMin - 8), incident: "Pasando Arco Poroy" },
+                { unit: "03", plate: "X3C-904", driver: "Franklin Apaza T.", baseTime: minutesTo24H(curMin), incident: "Salida Base puntual" },
+                { unit: "04", plate: "X4D-230", driver: "Edison Condori P.", baseTime: minutesTo24H(curMin + 8), incident: "En espera Huayruropata" },
+                { unit: "05", plate: "X5E-811", driver: "Julio C. Ramos", baseTime: minutesTo24H(curMin + 16), incident: "Programado" },
+                { unit: "06", plate: "X6F-102", driver: "Mario Ttito Q.", baseTime: minutesTo24H(curMin + 24), incident: "Programado" }
+            ];
+
+            document.getElementById('quickUnitNum').value = "07";
+            document.getElementById('unitInput').value = "07";
+            setNextSuggestedTime();
+
+            saveAndSortFleet();
+            showToast("¡Flota cargada! Base 8 Terminal Santiago contando de 8 en 8 minutos");
+        }
+
+        function ensureFunctionalFleet() {
+            const now = new Date();
+            const curMin = (now.getHours() * 60) + now.getMinutes();
+
+            if (fleet.length === 0) {
+                loadSampleData();
+                return;
+            }
+
+            // Comprobar si todas las unidades quedaron en el pasado lejano
+            const allExpired = fleet.every(item => {
+                const baseMin = parseTimeToMinutes(item.baseTime);
+                const elapsed = curMin - baseMin;
+                return elapsed > 120 || elapsed < -180;
+            });
+
+            if (allExpired) {
+                fleet.forEach((item, idx) => {
+                    const offset = (idx * 8) - 16;
+                    item.baseTime = minutesTo24H(curMin - offset);
+                });
+                saveAndSortFleet();
+            }
+        }
+
+        function toggleConfigModal(open) {
+            const modal = document.getElementById('configModal');
+            if (!modal) return;
+            if (open) {
+                document.getElementById('cfgBase').value = checkpoints.base;
+                document.getElementById('cfgC1').value = checkpoints.c1;
+                document.getElementById('cfgC2').value = checkpoints.c2;
+                document.getElementById('cfgC3').value = checkpoints.c3;
+                document.getElementById('cfgC4').value = checkpoints.c4;
+                document.getElementById('cfgEnd').value = checkpoints.end;
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function saveCheckpointSettings() {
+            checkpoints.base = document.getElementById('cfgBase').value.trim() || DEFAULT_CHECKPOINTS.base;
+            checkpoints.c1 = document.getElementById('cfgC1').value.trim() || DEFAULT_CHECKPOINTS.c1;
+            checkpoints.c2 = document.getElementById('cfgC2').value.trim() || DEFAULT_CHECKPOINTS.c2;
+            checkpoints.c3 = document.getElementById('cfgC3').value.trim() || DEFAULT_CHECKPOINTS.c3;
+            checkpoints.c4 = document.getElementById('cfgC4').value.trim() || DEFAULT_CHECKPOINTS.c4;
+            checkpoints.end = document.getElementById('cfgEnd').value.trim() || DEFAULT_CHECKPOINTS.end;
+
+            localStorage.setItem('planilla_checkpoints', JSON.stringify(checkpoints));
+            updateCheckpointLabels();
+            toggleConfigModal(false);
+            renderTable();
+            showToast("Nombres de paraderos actualizados");
+        }
+
+        function restoreDefaultCheckpoints() {
+            checkpoints = { ...DEFAULT_CHECKPOINTS };
+            document.getElementById('cfgBase').value = checkpoints.base;
+            document.getElementById('cfgC1').value = checkpoints.c1;
+            document.getElementById('cfgC2').value = checkpoints.c2;
+            document.getElementById('cfgC3').value = checkpoints.c3;
+            document.getElementById('cfgC4').value = checkpoints.c4;
+            document.getElementById('cfgEnd').value = checkpoints.end;
+            saveCheckpointSettings();
+        }
+
+        function updateCheckpointLabels() {
+            const thBase = document.getElementById('thBase');
+            const thC1 = document.getElementById('thC1');
+            const thC2 = document.getElementById('thC2');
+            const thC3 = document.getElementById('thC3');
+            const thC4 = document.getElementById('thC4');
+            const thEnd = document.getElementById('thEnd');
+
+            if (thBase) thBase.textContent = checkpoints.base;
+            if (thC1) thC1.textContent = checkpoints.c1;
+            if (thC2) thC2.textContent = checkpoints.c2;
+            if (thC3) thC3.textContent = checkpoints.c3;
+            if (thC4) thC4.textContent = checkpoints.c4;
+            if (thEnd) thEnd.textContent = checkpoints.end;
+
+            const lblBase = document.getElementById('lblBase');
+            const lblC1 = document.getElementById('lblC1');
+            const lblC2 = document.getElementById('lblC2');
+            const lblC3 = document.getElementById('lblC3');
+            const lblC4 = document.getElementById('lblC4');
+            const lblEnd = document.getElementById('lblEnd');
+
+            if (lblBase) lblBase.textContent = checkpoints.base;
+            if (lblC1) lblC1.textContent = checkpoints.c1;
+            if (lblC2) lblC2.textContent = checkpoints.c2;
+            if (lblC3) lblC3.textContent = checkpoints.c3;
+            if (lblC4) lblC4.textContent = checkpoints.c4;
+            if (lblEnd) lblEnd.textContent = checkpoints.end;
+        }
+
+        function exportToCSV() {
+            if (fleet.length === 0) {
+                showToast("No hay datos para exportar", true);
+                return;
+            }
+
+            const headers = [
+                "N°",
+                "Unidad",
+                "Placa",
+                "Chofer",
+                `HORA (${checkpoints.base})`,
+                `Base 8 +8m (${checkpoints.c1})`,
+                `Control 2 +12m (${checkpoints.c2})`,
+                `Control 3 +6m (${checkpoints.c3})`,
+                `Control 4 +19m (${checkpoints.c4})`,
+                `Llegada +18m (${checkpoints.end})`,
+                "Observacion",
+                "Formato"
+            ];
+
+            const rows = fleet.map((item, idx) => {
+                const baseMin = parseTimeToMinutes(item.baseTime);
+                const t = calculateVehicleTimeline(baseMin);
+                return [
+                    idx + 1,
+                    item.unit,
+                    item.plate || "",
+                    `"${item.driver || ''}"`,
+                    `"${formatMinutes(t.baseMin)}"`,
+                    `"${formatMinutes(t.c1Min)}"`,
+                    `"${formatMinutes(t.c2Min)}"`,
+                    `"${formatMinutes(t.c3Min)}"`,
+                    `"${formatMinutes(t.c4Min)}"`,
+                    `"${formatMinutes(t.endMin)}"`,
+                    `"${item.incident || ''}"`,
+                    `"${timeFormat}"`
+                ];
+            });
+
+            const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Planilla_Salida_Carros_${timeFormat}_${new Date().toISOString().slice(0,10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast("Planilla exportada a Excel (CSV)");
+        }
+
+        // ================= EXPORTAR PLANILLA EN IMAGEN PNG (PARA WHATSAPP) =================
+        function exportToPNG() {
+            if (fleet.length === 0) {
+                showToast("No hay carros en la planilla para exportar", true);
+                return;
+            }
+
+            const container = document.getElementById('planillaTableContainer');
+            if (!container) return;
+
+            showToast("📸 Generando imagen PNG de la planilla...");
+
+            if (typeof html2canvas === 'function') {
+                html2canvas(container, {
+                    scale: 2, // Nitidez doble para compartir en pantallas y WhatsApp
+                    backgroundColor: '#0b1120',
+                    useCORS: true,
+                    logging: false,
+                    ignoreElements: (el) => el.classList.contains('no-print')
+                }).then(canvas => {
+                    const dateStr = new Date().toISOString().slice(0, 10);
+                    const link = document.createElement('a');
+                    link.download = `Planilla_Ruta_Huayruropata_Anta_${dateStr}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    showToast("📸 ¡Planilla descargada en PNG! Lista para WhatsApp");
+                }).catch(err => {
+                    console.warn("Fallo html2canvas, usando generador Canvas nativo:", err);
+                    generateNativeCanvasPNG();
+                });
+            } else {
+                generateNativeCanvasPNG();
+            }
+        }
+
+        // Generador nativo HTML5 Canvas (funciona 100% offline sin librerías externas)
+        function generateNativeCanvasPNG() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const width = 1240;
+            const rowHeight = 42;
+            const headerHeight = 150;
+            const tableHeaderHeight = 54;
+            const totalHeight = headerHeight + tableHeaderHeight + (fleet.length * rowHeight) + 50;
+
+            canvas.width = width;
+            canvas.height = totalHeight;
+
+            // Fondo oscuro
+            ctx.fillStyle = '#070d18';
+            ctx.fillRect(0, 0, width, totalHeight);
+
+            // Borde exterior
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(16, 16, width - 32, totalHeight - 32);
+
+            // Título
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 20px Inter, sans-serif';
+            ctx.fillText('PLANILLA DE CONTROL Y SALIDA - TRANSPORTE PÚBLICO RURAL', 36, 52);
+
+            // Subtítulo de ruta
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px Inter, sans-serif';
+            ctx.fillText('Ruta: HORA (0m) • Base 8 Terminal Santiago (+8m) • Arco Poroy (+12m) • Cachimayo (+6m) • Izcuchaca (+19m) • Terminal Anta (+18m) | Circuito 63m', 36, 76);
+
+            // Fecha y formato
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            ctx.fillStyle = '#60a5fa';
+            ctx.font = 'bold 12px Inter, sans-serif';
+            ctx.fillText(`Fecha: ${dateStr}   |   Formato: ${timeFormat}   |   Total Unidades: ${fleet.length}`, 36, 102);
+
+            // Columnas
+            const colX = [36, 80, 230, 390, 500, 640, 760, 870, 990, 1110];
+            const colWidths = [44, 150, 160, 110, 140, 120, 110, 120, 120, 94];
+            const colNames = ['N°', 'Móvil / Placa', 'Chofer', 'HORA', 'Base 8 (+8m)', 'Arco Poroy (+12m)', 'Cachimayo (+6m)', 'Izcuchaca (+19m)', 'Anta (+18m)', 'Estado'];
+
+            const thY = 125;
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(36, thY, width - 72, tableHeaderHeight);
+
+            ctx.strokeStyle = '#334155';
+            ctx.strokeRect(36, thY, width - 72, tableHeaderHeight);
+
+            colNames.forEach((name, i) => {
+                if (i >= 4 && i <= 8) {
+                    ctx.fillStyle = 'rgba(30, 58, 138, 0.45)';
+                    ctx.fillRect(colX[i], thY + 2, colWidths[i], tableHeaderHeight - 4);
+                    ctx.fillStyle = '#bfdbfe';
+                    ctx.font = 'bold 12px Inter, sans-serif';
+                } else if (i === 3) {
+                    ctx.fillStyle = 'rgba(51, 65, 85, 0.5)';
+                    ctx.fillRect(colX[i], thY + 2, colWidths[i], tableHeaderHeight - 4);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 12px Inter, sans-serif';
+                } else {
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.font = 'bold 11px Inter, sans-serif';
+                }
+                ctx.fillText(name, colX[i] + 8, thY + 32);
+            });
+
+            // Filas
+            let curY = thY + tableHeaderHeight;
+            fleet.forEach((item, idx) => {
+                const baseMin = parseTimeToMinutes(item.baseTime);
+                const t = calculateVehicleTimeline(baseMin);
+                const status = getLiveVehicleStatus(t);
+
+                ctx.fillStyle = (idx % 2 === 0) ? '#0b1324' : '#070d18';
+                ctx.fillRect(36, curY, width - 72, rowHeight);
+
+                ctx.strokeStyle = '#1e293b';
+                ctx.beginPath();
+                ctx.moveTo(36, curY + rowHeight);
+                ctx.lineTo(width - 36, curY + rowHeight);
+                ctx.stroke();
+
+                // N°
+                ctx.fillStyle = '#64748b';
+                ctx.font = '11px "JetBrains Mono", monospace';
+                ctx.fillText(String(idx + 1), colX[0] + 10, curY + 25);
+
+                // Móvil / Placa
+                ctx.fillStyle = '#93c5fd';
+                ctx.font = 'bold 12px "JetBrains Mono", monospace';
+                ctx.fillText(`N° ${item.unit}`, colX[1] + 6, curY + 25);
+                if (item.plate) {
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.font = '11px "JetBrains Mono", monospace';
+                    ctx.fillText(` (${item.plate})`, colX[1] + 58, curY + 25);
+                }
+
+                // Chofer
+                ctx.fillStyle = '#cbd5e1';
+                ctx.font = '11px Inter, sans-serif';
+                const driverName = (item.driver || 'Chofer').slice(0, 18);
+                ctx.fillText(driverName, colX[2] + 6, curY + 25);
+
+                // HORA
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px "JetBrains Mono", monospace';
+                ctx.fillText(formatMinutes(t.baseMin), colX[3] + 8, curY + 25);
+
+                // Casillas azules: Base 8, Arco Poroy, Cachimayo, Izcuchaca, Anta
+                const times = [t.c1Min, t.c2Min, t.c3Min, t.c4Min, t.endMin];
+                times.forEach((timeVal, cIdx) => {
+                    const colIndex = 4 + cIdx;
+                    ctx.fillStyle = cIdx === 0 || cIdx === 4 ? 'rgba(30, 58, 138, 0.35)' : 'rgba(30, 58, 138, 0.15)';
+                    ctx.fillRect(colX[colIndex], curY, colWidths[colIndex], rowHeight);
+
+                    ctx.fillStyle = cIdx === 0 || cIdx === 4 ? '#dbeafe' : '#93c5fd';
+                    ctx.font = 'bold 12px "JetBrains Mono", monospace';
+                    ctx.fillText(formatMinutes(timeVal), colX[colIndex] + 10, curY + 25);
+                });
+
+                // Estado
+                ctx.fillStyle = status.code === 'EN_ROUTE' ? '#f59e0b' : (status.code === 'ARRIVED' ? '#10b981' : '#60a5fa');
+                ctx.font = 'bold 11px Inter, sans-serif';
+                const stText = status.code === 'EN_ROUTE' ? 'En Ruta' : (status.code === 'ARRIVED' ? 'Llegada' : 'Espera');
+                ctx.fillText(stText, colX[9] + 6, curY + 25);
+
+                curY += rowHeight;
+            });
+
+            // Pie
+            ctx.fillStyle = '#475569';
+            ctx.font = '11px Inter, sans-serif';
+            ctx.fillText('Control de Despacho • Planilla descargada en imagen PNG de alta definición para WhatsApp', 36, curY + 26);
+
+            const fileDate = new Date().toISOString().slice(0, 10);
+            const link = document.createElement('a');
+            link.download = `Planilla_Ruta_Huayruropata_Anta_${fileDate}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast("📸 ¡Planilla descargada en PNG! Lista para WhatsApp");
+        }
+
+        // ================= IMPORTAR PLANILLA (DESDE ARCHIVO CSV / JSON) =================
+        function triggerImportFile() {
+            const input = document.getElementById('importFileInput');
+            if (input) input.click();
+        }
+
+        function handleImportFile(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                try {
+                    // Si el archivo es JSON
+                    if (file.name.endsWith('.json')) {
+                        const data = JSON.parse(text);
+                        if (Array.isArray(data) && data.length > 0) {
+                            fleet = data;
+                            saveAndSortFleet();
+                            setNextSuggestedTime();
+                            showToast(`¡Planilla importada con éxito! (${fleet.length} móviles cargados)`);
+                            return;
+                        }
+                    }
+
+                    // Procesar CSV
+                    const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+                    if (lines.length <= 1) {
+                        showToast("El archivo no contiene filas de datos", true);
+                        return;
+                    }
+
+                    const newFleet = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        const cols = lines[i].split(',').map(c => c.replace(/^"|"$/g, '').trim());
+                        if (cols.length >= 5) {
+                            const unit = cols[1] || String(i).padStart(2, '0');
+                            const plate = cols[2] || '';
+                            const driver = cols[3] || `Conductor ${unit}`;
+                            const timeStr = cols[4] || '08:00';
+                            const incident = cols[10] || '';
+
+                            let baseMin = 0;
+                            if (timeStr.includes('AM') || timeStr.includes('PM')) {
+                                const parts = timeStr.replace(/(AM|PM)/i, '').trim().split(':');
+                                let h = parseInt(parts[0], 10) || 0;
+                                const m = parseInt(parts[1], 10) || 0;
+                                if (/PM/i.test(timeStr) && h < 12) h += 12;
+                                if (/AM/i.test(timeStr) && h === 12) h = 0;
+                                baseMin = (h * 60) + m;
+                            } else {
+                                baseMin = parseTimeToMinutes(timeStr);
+                            }
+
+                            newFleet.push({
+                                unit,
+                                plate,
+                                driver,
+                                baseTime: minutesTo24H(baseMin),
+                                incident
+                            });
+                        }
+                    }
+
+                    if (newFleet.length > 0) {
+                        fleet = newFleet;
+                        saveAndSortFleet();
+                        setNextSuggestedTime();
+                        showToast(`¡Planilla importada con éxito! (${fleet.length} móviles cargados)`);
+                    } else {
+                        showToast("No se encontraron registros válidos en el archivo", true);
+                    }
+                } catch (err) {
+                    console.error("Error al importar:", err);
+                    showToast("Error al procesar el archivo para importar", true);
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toastMsg');
+            const iconEl = document.getElementById('toastIcon');
+
+            if (!toast || !msgEl || !iconEl) return;
+
+            msgEl.textContent = message;
+            if (isError) {
+                iconEl.className = "text-rose-400";
+                iconEl.innerHTML = `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+            } else {
+                iconEl.className = "text-emerald-400";
+                iconEl.innerHTML = `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`;
+            }
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3200);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateFormatToggleUI();
+            updateCheckpointLabels();
+            setSystemTimeToInput();
+            setBatchStartTimeToNow();
+
+            ensureFunctionalFleet();
+
+            if (fleet.length === 0) {
+                loadSampleData();
+            } else {
+                renderTable();
+                const nextNum = fleet.length + 1;
+                const quickNumEl = document.getElementById('quickUnitNum');
+                const unitInputEl = document.getElementById('unitInput');
+                if (quickNumEl) quickNumEl.value = String(nextNum).padStart(2, '0');
+                if (unitInputEl) unitInputEl.value = String(nextNum).padStart(2, '0');
+                setNextSuggestedTime();
+            }
+
+            // Actualizar reloj para timestamp de impresión
+            updateLiveClock();
+            setInterval(updateLiveClock, 1000);
+
+            // Re-evaluar estados de la tabla periódicamente (cada 10 seg)
+            setInterval(renderTable, 10000);
+        });
+    </script>
+</body>
+</html>
